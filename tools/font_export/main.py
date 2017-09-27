@@ -12,9 +12,12 @@ SVG_PATH = "svg"
 OUT_PATH = "font"
 OUT_NAME = ".txt"
 
+def is_readable_glyph(glyph):
+    return glyph.has_key('unicode') and len(glyph['unicode']) > 0
+
 def get_chars_dict(glyphs):
     chars = {}
-    for glyph in [ glyph for glyph in glyphs if glyph.has_key('unicode') ]:
+    for glyph in [ glyph for glyph in glyphs if is_readable_glyph(glyph) ]:
         unicode_attr = glyph['unicode']
         if len(unicode_attr) > 1:
             chars[unicode_attr] = unicode_attr
@@ -212,7 +215,7 @@ def svg_to_txt():
         #find glyph elements
         target = soup.find_all('glyph')
 
-        for i in target:
+        for i in [glyph for glyph in target if is_readable_glyph(glyph)]:
 
             if i.has_attr('unicode'):
                 if len( i['unicode'] ) > 1:
