@@ -28,6 +28,12 @@ def get_chars_dict(glyphs):
 
     return chars
 
+def get_glyph_definition(element):
+    if element.has_key('d'):
+        return element['d'].replace("\n", "")
+    else:
+        return ""
+
 if os.path.exists( SVG_PATH ):
     shutil.rmtree( SVG_PATH )
 os.mkdir( SVG_PATH )
@@ -216,6 +222,7 @@ def svg_to_txt():
         target = soup.find_all('glyph')
 
         for i in [glyph for glyph in target if is_readable_glyph(glyph)]:
+            glyph_definition = get_glyph_definition(i)
 
             if i.has_attr('unicode'):
                 if len( i['unicode'] ) > 1:
@@ -228,10 +235,10 @@ def svg_to_txt():
                 #normal chars
                 if chars[ unicode_str ] == 1:
                     if i.has_attr('horiz-adv-x') and i.has_attr('d'):
-                        out += '1|' + unicode_str + '|' + i['horiz-adv-x'] + '|' + i['d']  + '\n'
+                        out += '1|' + unicode_str + '|' + i['horiz-adv-x'] + '|' + glyph_definition  + '\n'
 
                     elif i.has_attr('d') and i.has_attr('horiz-adv-x') == False:
-                        out += '1|' + unicode_str + '|' + str( default ) + '|' + i['d']  + '\n'
+                        out += '1|' + unicode_str + '|' + str( default ) + '|' + glyph_definition  + '\n'
 
                     elif i.has_attr('d') == False and i.has_attr('horiz-adv-x') == True:
                         out += '1|' + unicode_str + '|' + i['horiz-adv-x'] + '|\n'
@@ -242,10 +249,10 @@ def svg_to_txt():
                 #ligatures
                 else:
                     if i.has_attr('d') and i.has_attr('horiz-adv-x'):
-                        out += '1|' + chars[ unicode_str ] + '|' + i['horiz-adv-x'] + '|' + i['d']  + '\n'
+                        out += '1|' + chars[ unicode_str ] + '|' + i['horiz-adv-x'] + '|' + glyph_definition  + '\n'
 
                     elif i.has_attr('d') and i.has_attr('horiz-adv-x') == False:
-                        out += '1|' + chars[ unicode_str ] + '|' + str( default ) + '|' + i['d']  + '\n'
+                        out += '1|' + chars[ unicode_str ] + '|' + str( default ) + '|' + glyph_definition  + '\n'
 
                     elif i.has_attr('d') == False and i.has_attr('horiz-adv-x') == True:
                         out += '1|' + chars[ unicode_str ] + '|' + i['horiz-adv-x'] + '|\n'
